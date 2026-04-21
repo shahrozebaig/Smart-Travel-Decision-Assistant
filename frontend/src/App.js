@@ -42,13 +42,12 @@ function App() {
     return <LandingPage onStart={() => setShowLanding(false)} />;
   }
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 relative overflow-hidden">
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-brand-600/5 blur-[150px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none"></div>
+    <div className="min-h-screen bg-slate-950 text-slate-50 relative">
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
       <Navbar onBack={() => setShowLanding(true)} />
-      <main className="max-w-7xl mx-auto px-6 py-12 relative z-10">
-        <header className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10">
+        <header className="text-center mb-10 sm:mb-16">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-white">
             Travel Planning Dashboard
           </h1>
           <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">

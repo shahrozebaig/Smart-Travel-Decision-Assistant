@@ -46,16 +46,16 @@ function SearchBox({ onSearch }) {
   }, []);
   return (
     <div className="w-full max-w-2xl mx-auto mt-6 px-4" ref={dropdownRef}>
-      <div className="glass-panel rounded-3xl p-6 shadow-2xl relative">
+      <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 relative">
         <div className="flex flex-wrap gap-2 mb-4">
           {selectedCities.map((city, index) => (
             <div
               key={index}
-              className="bg-brand-500/10 border border-brand-500/30 text-brand-400 px-4 py-1.5 rounded-full text-sm font-semibold flex items-center gap-2 group hover:bg-brand-500/20 transition-all cursor-default"
+              className="bg-white/5 border border-white/10 text-slate-300 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2"
             >
               {city}
               <button
-                className="hover:text-white transition-colors"
+                className="hover:text-rose-400 transition-colors"
                 onClick={() => removeCity(city)}
               >
                 ✕
@@ -63,36 +63,32 @@ function SearchBox({ onSearch }) {
             </div>
           ))}
           {selectedCities.length === 0 && (
-            <div className="text-slate-500 text-sm py-1.5 italic">No cities selected...</div>
+            <div className="text-slate-600 text-sm py-1.5">No cities selected</div>
           )}
         </div>
         <div className="relative">
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-500">
-            🔍
-          </div>
           <input
-            className="w-full bg-white/[0.03] border border-white/10 rounded-2xl pl-12 pr-4 py-4 outline-none text-white placeholder-slate-500 focus:border-brand-500/50 focus:ring-4 focus:ring-brand-500/10 transition-all"
-            placeholder="Search cities (e.g., Mumbai, Delhi)..."
+            className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-6 py-4 outline-none text-white placeholder-slate-600 transition-all focus:border-brand-500/30"
+            placeholder="Enter city names..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onFocus={() => setIsFocused(true)}
           />
           {(isFocused || input) && (
-            <div className="absolute top-full left-0 right-0 mt-2 z-20 bg-slate-900/95 backdrop-blur-xl rounded-2xl max-h-64 overflow-y-auto shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 scrollbar-thin scrollbar-thumb-white/10">
+            <div className="absolute top-full left-0 right-0 mt-2 z-20 bg-slate-900 border border-white/10 rounded-xl max-h-64 overflow-y-auto shadow-2xl">
               {filteredCities.length > 0 ? (
                 filteredCities.map((city, index) => (
                   <div
                     key={index}
-                    className="px-6 py-3 hover:bg-white/5 cursor-pointer text-slate-300 hover:text-brand-400 transition-colors flex justify-between items-center group"
+                    className="px-6 py-3 hover:bg-white/5 cursor-pointer text-slate-400 hover:text-white transition-colors"
                     onClick={() => addCity(city)}
                   >
-                    <span className="font-medium">{city}</span>
-                    <span className="text-[10px] bg-brand-500/10 px-2 py-0.5 rounded text-brand-500 opacity-0 group-hover:opacity-100 transition-opacity uppercase font-bold tracking-widest">Select +</span>
+                    {city}
                   </div>
                 ))
               ) : (
-                <div className="px-6 py-8 text-slate-500 text-sm italic text-center">
-                  City not found.
+                <div className="px-6 py-8 text-slate-600 text-sm italic text-center">
+                  Search results will appear here
                 </div>
               )}
             </div>
@@ -100,10 +96,10 @@ function SearchBox({ onSearch }) {
         </div>
       </div>
       <button
-        className="btn-primary w-full mt-6 py-4 text-lg"
+        className="w-full mt-6 bg-brand-600 hover:bg-brand-500 text-white font-bold py-4 rounded-xl transition-all active:scale-[0.98]"
         onClick={handleSearch}
       >
-        Get Travel Analysis ⚡
+        GENERATE TRAVEL ANALYSIS
       </button>
     </div>
   );

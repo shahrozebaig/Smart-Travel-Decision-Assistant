@@ -37,7 +37,7 @@ function ResultCard({ data, onRefresh, isRefreshing, index }) {
     ai.vehicle === "WALK" ? "Good for short outdoor activity" : null,
   ].filter(Boolean);
   return (
-    <div className="glass-panel rounded-[2rem] p-8 relative group transition-all hover:shadow-brand-500/5">
+    <div className="glass-panel rounded-[1.5rem] sm:rounded-[2rem] p-6 sm:p-8 relative group transition-all hover:shadow-brand-500/5">
       <div className="flex justify-between items-start mb-6">
         <div>
           <div className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Destination</div>
@@ -56,73 +56,44 @@ function ResultCard({ data, onRefresh, isRefreshing, index }) {
         <span>Updated At</span>
         <span>{currentTime.toLocaleTimeString()}</span>
       </div>
-      <div className="grid grid-cols-2 gap-3 mb-8">
-        <WeatherMetric icon="🌡️" label="Temp" value={`${weather.temperature}°C`} />
-        <WeatherMetric icon="💧" label="Humidity" value={`${weather.humidity}%`} />
-        <WeatherMetric icon="🌬️" label="Wind" value={`${weather.wind_speed}km/h`} />
-        <WeatherMetric icon="☁️" label="Condition" value={weather.condition} />
+      <div className="grid grid-cols-2 gap-4 mb-10">
+        <WeatherMetric label="Temperature" value={`${weather.temperature}°C`} />
+        <WeatherMetric label="Humidity" value={`${weather.humidity}%`} />
+        <WeatherMetric label="Wind Speed" value={`${weather.wind_speed}km/h`} />
+        <WeatherMetric label="Conditions" value={weather.condition} />
       </div>
-      <div className="space-y-6">
-        <div className="relative p-6 rounded-3xl bg-brand-500/5 border border-brand-500/10">
-          <div className="absolute -top-3 left-6 px-3 py-1 bg-brand-600 rounded-full text-[10px] font-bold uppercase tracking-widest text-white">
-            AI Recommendation
-          </div>
-          <div className="flex items-center gap-4 pt-1">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${isGood ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
-              {isGood ? "✓" : "!"}
-            </div>
+      <div className="space-y-8">
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+          <div className="flex items-start gap-4">
+            <div className={`mt-1 h-3 w-3 rounded-full shrink-0 ${isGood ? "bg-emerald-500" : "bg-rose-500"} shadow-[0_0_10px_rgba(16,185,129,0.2)]`}></div>
             <div>
-              <div className={`font-bold text-lg ${isGood ? "text-emerald-400" : "text-rose-400"}`}>
-                {isGood ? "Travel Recommended" : "Caution Advised"}
+              <div className="text-sm font-bold tracking-tight mb-2 uppercase text-white/90">
+                AI System Analysis
               </div>
-              <div className="text-slate-400 text-xs mt-1">
+              <p className="text-slate-400 text-sm leading-relaxed">
                 {Array.isArray(ai.reason) ? ai.reason[0] : ai.reason}
-              </div>
+              </p>
             </div>
           </div>
         </div>
-        <div className="glass-card rounded-3xl p-6 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-3xl">
-              {getVehicleIcon(ai.vehicle)}
-            </div>
-            <div>
-              <div className="text-slate-500 text-xs font-bold uppercase tracking-tighter">Optimal Mode</div>
-              <div className="font-bold text-xl">{ai.vehicle.replace("_", " ")}</div>
+        <div className="flex items-center justify-between py-4 border-y border-white/5">
+          <div className="space-y-1">
+            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Recommended Mode</div>
+            <div className="text-xl font-bold flex items-center gap-2">
+              <span className="opacity-70">{getVehicleIcon(ai.vehicle)}</span>
+              {ai.vehicle.replace("_", " ")}
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-[10px] text-brand-400 font-bold mb-1 uppercase">Comfort Level</div>
-            <div className="flex gap-0.5">
-              {[1, 2, 3, 4, 5].map((s) => (
-                <div key={s} className={`w-2.5 h-1 rounded-full ${s <= 4 ? "bg-brand-500" : "bg-white/10"}`}></div>
-              ))}
-            </div>
+          <div className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border ${isGood ? 'border-emerald-500/20 text-emerald-400' : 'border-rose-500/20 text-rose-400'}`}>
+            {isGood ? 'Optimal' : 'Advisory'}
           </div>
         </div>
-        <div className="glass-card rounded-3xl p-6">
-          <div className="text-[10px] text-slate-500 font-bold mb-3 uppercase tracking-widest flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
-            AI Reasoning
-          </div>
-          <ul className="space-y-2">
-            {(Array.isArray(ai.reason) ? ai.reason : [ai.reason]).map((r, i) => (
-              <li key={i} className="text-xs text-slate-300 flex items-start gap-2">
-                <span className="text-brand-500 mt-0.5">•</span>
-                {r}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="glass-card rounded-3xl p-6">
-          <div className="text-[10px] text-slate-500 font-bold mb-3 uppercase tracking-widest flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            Key Recommendations
-          </div>
-          <ul className="space-y-2">
-            {recommendations.map((rec, i) => (
-              <li key={i} className="text-xs text-slate-300 flex items-start gap-2">
-                <span className="text-emerald-500 mt-0.5">✓</span>
+        <div className="space-y-4">
+          <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Expert Recommendations</div>
+          <ul className="space-y-3">
+            {recommendations.slice(0, 3).map((rec, i) => (
+              <li key={i} className="text-sm text-slate-400 flex items-start gap-3">
+                <span className="w-1 h-1 rounded-full bg-brand-500 mt-2 shrink-0"></span>
                 {rec}
               </li>
             ))}
@@ -148,14 +119,11 @@ function ResultCard({ data, onRefresh, isRefreshing, index }) {
     </div>
   );
 }
-function WeatherMetric({ icon, label, value }) {
+function WeatherMetric({ label, value }) {
   return (
-    <div className="glass-card rounded-2xl p-4 flex items-center gap-3">
-      <div className="text-xl">{icon}</div>
-      <div>
-        <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{label}</div>
-        <div className="text-sm font-bold text-slate-200 uppercase">{value}</div>
-      </div>
+    <div className="glass-panel rounded-2xl p-4">
+      <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight mb-1">{label}</div>
+      <div className="text-sm font-bold text-slate-200 uppercase">{value}</div>
     </div>
   );
 }
