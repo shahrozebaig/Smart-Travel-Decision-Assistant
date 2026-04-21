@@ -4,8 +4,6 @@
 
 <img src="frontend/public/logo.jpeg" width="200" style="border-radius: 20px;" />
 
-### Your Personal Weather-Based Travel Companion
-
 </div>
 
 ---
