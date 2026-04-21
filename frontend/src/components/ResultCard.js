@@ -20,6 +20,26 @@ function ResultCard({ data, onRefresh, isRefreshing, index }) {
     if (v.includes("PUBLIC")) return "🚌";
     return "🚘";
   };
+  const getConditionEmoji = (condition) => {
+    const c = condition?.toLowerCase() || "";
+    if (c.includes("clear") || c.includes("sun")) return "☀️";
+    if (c.includes("mostly sunny")) return "🌤️";
+    if (c.includes("partly cloudy")) return "⛅";
+    if (c.includes("cloud")) return "☁️";
+    if (c.includes("overcast")) return "🌥️";
+    if (c.includes("rain") || c.includes("drizzle")) return "🌧️";
+    if (c.includes("shower")) return "🌦️";
+    if (c.includes("storm") || c.includes("thunder")) return "⛈️";
+    if (c.includes("lightning")) return "⚡";
+    if (c.includes("snow")) return "❄️";
+    if (c.includes("mist") || c.includes("fog") || c.includes("haze")) return "🌫️";
+    if (c.includes("smoke")) return "💨";
+    if (c.includes("dust") || c.includes("sand")) return "🏜️";
+    if (c.includes("wind")) return "🌬️";
+    if (c.includes("hot")) return "🔥";
+    if (c.includes("cold")) return "🥶";
+    return "🌡️";
+  };
   const alerts = [
     weather.temperature > 35 ? "🔥 Heat Alert: Very high temperature" : null,
     weather.condition.toLowerCase().includes("rain") ? "🌧 Rain Alert: Carry protection" : null,
@@ -57,10 +77,10 @@ function ResultCard({ data, onRefresh, isRefreshing, index }) {
         <span>{currentTime.toLocaleTimeString()}</span>
       </div>
       <div className="grid grid-cols-2 gap-4 mb-10">
-        <WeatherMetric label="Temperature" value={`${weather.temperature}°C`} />
-        <WeatherMetric label="Humidity" value={`${weather.humidity}%`} />
-        <WeatherMetric label="Wind Speed" value={`${weather.wind_speed}km/h`} />
-        <WeatherMetric label="Conditions" value={weather.condition} />
+        <WeatherMetric label="Temperature" value={`${weather.temperature}°C`} icon="🌡️" />
+        <WeatherMetric label="Humidity" value={`${weather.humidity}%`} icon="💧" />
+        <WeatherMetric label="Wind Speed" value={`${weather.wind_speed}km/h`} icon="🌬️" />
+        <WeatherMetric label="Conditions" value={weather.condition} icon={getConditionEmoji(weather.condition)} />
       </div>
       <div className="space-y-8">
         <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
@@ -93,7 +113,13 @@ function ResultCard({ data, onRefresh, isRefreshing, index }) {
           <ul className="space-y-3">
             {recommendations.slice(0, 3).map((rec, i) => (
               <li key={i} className="text-sm text-slate-400 flex items-start gap-3">
-                <span className="w-1 h-1 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                <span className="text-base shrink-0">
+                  {rec.includes("Avoid") || rec.includes("Avoid") ? "⚠️" : 
+                   rec.includes("Stay hydrated") ? "🥤" :
+                   rec.includes("AC") ? "❄️" :
+                   rec.includes("protective") ? "🛡️" :
+                   rec.includes("Good") ? "✅" : "💡"}
+                </span>
                 {rec}
               </li>
             ))}
@@ -119,11 +145,14 @@ function ResultCard({ data, onRefresh, isRefreshing, index }) {
     </div>
   );
 }
-function WeatherMetric({ label, value }) {
+function WeatherMetric({ label, value, icon }) {
   return (
-    <div className="glass-panel rounded-2xl p-4">
-      <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight mb-1">{label}</div>
-      <div className="text-sm font-bold text-slate-200 uppercase">{value}</div>
+    <div className="glass-panel rounded-2xl p-4 flex items-center gap-3">
+      <div className="text-2xl opacity-80">{icon}</div>
+      <div>
+        <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight mb-1">{label}</div>
+        <div className="text-sm font-bold text-slate-200 uppercase">{value}</div>
+      </div>
     </div>
   );
 }
