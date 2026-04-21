@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-function ResultCard({ data }) {
+function ResultCard({ data, onRefresh, isRefreshing, index }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   useEffect(() => {
     const interval = setInterval(() => {
@@ -13,39 +13,21 @@ function ResultCard({ data }) {
   const isGood = ai.decision === "YES";
   const getVehicleIcon = (vehicle) => {
     switch (vehicle) {
-      case "CAR":
-        return "🚗";
-      case "BIKE":
-        return "🏍️";
-      case "WALK":
-        return "🚶";
-      case "PUBLIC_TRANSPORT":
-        return "🚌";
-      default:
-        return "🚘";
+      case "CAR": return "🚗";
+      case "BIKE": return "🏍️";
+      case "WALK": return "🚶";
+      case "PUBLIC_TRANSPORT": return "🚌";
+      default: return "🚘";
     }
   };
-  const getComfortScore = () => {
-    let score = 100;
-    if (weather.temperature > 35) score -= 40;
-    else if (weather.temperature > 30) score -= 25;
-    if (weather.humidity > 70) score -= 15;
-    if (weather.wind_speed > 10) score -= 10;
-    if (weather.condition.toLowerCase().includes("rain")) score -= 20;
-    if (weather.condition.toLowerCase().includes("haze")) score -= 15;
-    return Math.max(score, 10);
-  };
-  const score = getComfortScore();
   const alerts = [
     weather.temperature > 35 ? "🔥 Heat Alert: Very high temperature" : null,
     weather.condition.toLowerCase().includes("rain") ? "🌧 Rain Alert: Carry protection" : null,
-    weather.condition.toLowerCase().includes("haze") ? "🌫 Visibility Alert: Low visibility" : null,
   ].filter(Boolean);
   const risks = [
-    weather.temperature > 32 ? "🌡 High Temperature" : null,
-    weather.humidity > 70 ? "💧 High Humidity" : null,
-    weather.wind_speed > 10 ? "🌬 Strong Wind" : null,
-    weather.condition.toLowerCase().includes("haze") ? "🌫 Low Visibility" : null,
+    weather.temperature > 32 ? "🌡 High Temp" : null,
+    weather.humidity > 70 ? "💧 Humidity" : null,
+    weather.wind_speed > 10 ? "🌬 Wind" : null,
   ].filter(Boolean);
   const recommendations = [
     !isGood ? "Avoid going out during peak hours" : "Weather is suitable for travel",
@@ -54,79 +36,125 @@ function ResultCard({ data }) {
     ai.vehicle === "BIKE" ? "Wear protective gear while riding" : null,
     ai.vehicle === "WALK" ? "Good for short outdoor activity" : null,
   ].filter(Boolean);
-  const vehicleReason = {
-    CAR: "Best for comfort and protection from heat or bad weather.",
-    BIKE: "Good for short and pleasant rides in safe weather.",
-    WALK: "Ideal for short distances in comfortable conditions.",
-    PUBLIC_TRANSPORT: "Cost-effective and safe option for longer travel.",
-  };
   return (
-    <div className="mt-10 max-w-md mx-auto px-4">
-      <div className="backdrop-blur-xl bg-white/10 border border-white/10 rounded-2xl shadow-2xl p-6 text-white">
-        <h2 className="text-2xl font-bold text-center">
-          📍 {data.data.city}
-        </h2>
-        <div className="text-center mt-2 text-xs text-gray-400">
-          ⏱ {currentTime.toLocaleTimeString()} • Updated just now
+    <div className="glass-panel rounded-[2rem] p-8 relative group transition-all hover:shadow-brand-500/5">
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <div className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Destination</div>
+          <h2 className="text-3xl font-bold tracking-tighter">{data.data.city}</h2>
         </div>
-        <div className="mt-5 text-center">
-          <p className="text-sm text-gray-400">Comfort Score</p>
-          <p className="text-3xl font-bold">{score}/100</p>
-        </div>
-        <div className="mt-5 grid grid-cols-2 gap-4 bg-white/5 p-4 rounded-xl text-sm">
-          <p>🌡 {weather.temperature}°C</p>
-          <p>💧 {weather.humidity}%</p>
-          <p>🌬 {weather.wind_speed} km/h</p>
-          <p>☁ {weather.condition}</p>
-        </div>
-        <div className="mt-6 text-center">
-          <div className={`inline-block px-5 py-2 rounded-full text-sm font-semibold ${isGood ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>
-            {isGood ? "✅ Good Conditions" : "❌ Avoid Going Out"}
+        <button
+          onClick={() => onRefresh(data.data.city, index)}
+          className={`p-3 rounded-2xl bg-white/5 hover:bg-brand-500/10 transition-all ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          <span className={`inline-block ${isRefreshing ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-500"}`}>
+            🔄
+          </span>
+        </button>
+      </div>
+      <div className="text-[10px] font-mono text-slate-500 mb-8 border-b border-white/5 pb-4 flex justify-between uppercase">
+        <span>Updated At</span>
+        <span>{currentTime.toLocaleTimeString()}</span>
+      </div>
+      <div className="grid grid-cols-2 gap-3 mb-8">
+        <WeatherMetric icon="🌡️" label="Temp" value={`${weather.temperature}°C`} />
+        <WeatherMetric icon="💧" label="Humidity" value={`${weather.humidity}%`} />
+        <WeatherMetric icon="🌬️" label="Wind" value={`${weather.wind_speed}km/h`} />
+        <WeatherMetric icon="☁️" label="Condition" value={weather.condition} />
+      </div>
+      <div className="space-y-6">
+        <div className="relative p-6 rounded-3xl bg-brand-500/5 border border-brand-500/10">
+          <div className="absolute -top-3 left-6 px-3 py-1 bg-brand-600 rounded-full text-[10px] font-bold uppercase tracking-widest text-white">
+            AI Recommendation
+          </div>
+          <div className="flex items-center gap-4 pt-1">
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${isGood ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
+              {isGood ? "✓" : "!"}
+            </div>
+            <div>
+              <div className={`font-bold text-lg ${isGood ? "text-emerald-400" : "text-rose-400"}`}>
+                {isGood ? "Travel Recommended" : "Caution Advised"}
+              </div>
+              <div className="text-slate-400 text-xs mt-1">
+                {Array.isArray(ai.reason) ? ai.reason[0] : ai.reason}
+              </div>
+            </div>
           </div>
         </div>
-        {alerts.length > 0 && (
-          <div className="mt-5 bg-red-500/10 border border-red-500/20 p-3 rounded-xl">
-            <p className="text-sm text-red-400 mb-1">🚨 Alerts</p>
-            {alerts.map((a, i) => (
-              <p key={i} className="text-xs text-red-300">{a}</p>
+        <div className="glass-card rounded-3xl p-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-3xl">
+              {getVehicleIcon(ai.vehicle)}
+            </div>
+            <div>
+              <div className="text-slate-500 text-xs font-bold uppercase tracking-tighter">Optimal Mode</div>
+              <div className="font-bold text-xl">{ai.vehicle.replace("_", " ")}</div>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-[10px] text-brand-400 font-bold mb-1 uppercase">Comfort Level</div>
+            <div className="flex gap-0.5">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <div key={s} className={`w-2.5 h-1 rounded-full ${s <= 4 ? "bg-brand-500" : "bg-white/10"}`}></div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="glass-card rounded-3xl p-6">
+          <div className="text-[10px] text-slate-500 font-bold mb-3 uppercase tracking-widest flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+            AI Reasoning
+          </div>
+          <ul className="space-y-2">
+            {(Array.isArray(ai.reason) ? ai.reason : [ai.reason]).map((r, i) => (
+              <li key={i} className="text-xs text-slate-300 flex items-start gap-2">
+                <span className="text-brand-500 mt-0.5">•</span>
+                {r}
+              </li>
             ))}
+          </ul>
+        </div>
+        <div className="glass-card rounded-3xl p-6">
+          <div className="text-[10px] text-slate-500 font-bold mb-3 uppercase tracking-widest flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Key Recommendations
           </div>
-        )}
-        {risks.length > 0 && (
-          <div className="mt-5">
-            <p className="text-sm text-gray-400 mb-2">Risk Factors</p>
+          <ul className="space-y-2">
+            {recommendations.map((rec, i) => (
+              <li key={i} className="text-xs text-slate-300 flex items-start gap-2">
+                <span className="text-emerald-500 mt-0.5">✓</span>
+                {rec}
+              </li>
+            ))}
+          </ul>
+        </div>
+        {(alerts.length > 0 || risks.length > 0) && (
+          <div className="px-2">
             <div className="flex flex-wrap gap-2">
+              {alerts.map((a, i) => (
+                <span key={i} className="px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wider">
+                  {a.split(":")[0]}
+                </span>
+              ))}
               {risks.map((r, i) => (
-                <span key={i} className="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs">{r}</span>
+                <span key={i} className="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-wider">
+                  {r}
+                </span>
               ))}
             </div>
           </div>
         )}
-        <div className="mt-5 bg-white/5 p-4 rounded-xl">
-          <p className="text-sm text-gray-400 mb-1">💡 AI Insight</p>
-          <ul className="text-sm text-gray-300 space-y-1">
-            {Array.isArray(ai.reason)
-              ? ai.reason.map((r, i) => <li key={i}>• {r}</li>)
-              : <li>{ai.reason}</li>}
-          </ul>
-        </div>
-        <div className="mt-5 bg-gradient-to-r from-blue-600/20 to-blue-400/10 p-4 rounded-xl text-center border border-blue-500/20">
-          <p className="text-sm text-gray-300">Recommended Vehicle</p>
-          <p className="text-2xl font-bold mt-1">
-            {getVehicleIcon(ai.vehicle)} {ai.vehicle.replace("_", " ")}
-          </p>
-          <p className="text-xs text-gray-300 mt-2">
-            {vehicleReason[ai.vehicle] || ""}
-          </p>
-        </div>
-        <div className="mt-5">
-          <p className="text-sm text-gray-400 mb-2">📌 What You Should Do</p>
-          <ul className="text-sm text-gray-300 space-y-1">
-            {recommendations.map((rec, i) => (
-              <li key={i}>• {rec}</li>
-            ))}
-          </ul>
-        </div>
+      </div>
+    </div>
+  );
+}
+function WeatherMetric({ icon, label, value }) {
+  return (
+    <div className="glass-card rounded-2xl p-4 flex items-center gap-3">
+      <div className="text-xl">{icon}</div>
+      <div>
+        <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{label}</div>
+        <div className="text-sm font-bold text-slate-200 uppercase">{value}</div>
       </div>
     </div>
   );
