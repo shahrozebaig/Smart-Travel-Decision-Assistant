@@ -47,15 +47,6 @@ function ResultCard({ data }) {
     weather.wind_speed > 10 ? "🌬 Strong Wind" : null,
     weather.condition.toLowerCase().includes("haze") ? "🌫 Low Visibility" : null,
   ].filter(Boolean);
-  const getBestTime = () => {
-    if (weather.temperature > 32) {
-      return "After 6 PM (cooler conditions)";
-    }
-    if (weather.condition.toLowerCase().includes("rain")) {
-      return "Wait until rain stops";
-    }
-    return "Anytime is fine";
-  };
   const recommendations = [
     !isGood ? "Avoid going out during peak hours" : "Weather is suitable for travel",
     weather.temperature > 32 ? "Stay hydrated and avoid heat exposure" : null,
@@ -118,12 +109,6 @@ function ResultCard({ data }) {
               ? ai.reason.map((r, i) => <li key={i}>• {r}</li>)
               : <li>{ai.reason}</li>}
           </ul>
-        </div>
-        <div className="mt-5 bg-green-500/10 border border-green-500/20 p-3 rounded-xl text-center">
-          <p className="text-sm text-green-400">⏰ Best Time to Go Out</p>
-          <p className="text-sm text-green-300 mt-1">
-            {getBestTime()}
-          </p>
         </div>
         <div className="mt-5 bg-gradient-to-r from-blue-600/20 to-blue-400/10 p-4 rounded-xl text-center border border-blue-500/20">
           <p className="text-sm text-gray-300">Recommended Vehicle</p>
