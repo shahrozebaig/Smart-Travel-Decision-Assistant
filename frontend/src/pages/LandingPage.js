@@ -52,11 +52,14 @@ function LandingPage({ onStart }) {
       </nav>
 
       <main className="relative z-20 flex flex-col items-center justify-center text-center px-6 pt-24 pb-32">
-        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold leading-[1.1] max-w-5xl tracking-tighter text-white">
+        <h1 
+          className="text-4xl sm:text-6xl md:text-8xl font-bold leading-[1.1] max-w-5xl tracking-tighter text-transparent bg-clip-text animate-text-wave"
+          style={{
+            backgroundImage: 'linear-gradient(to right, #ff004c, #ff8a00, #f9cb28, #00ff88, #00d2ff, #26a0da, #a800ff, #ffffff, #ffffff, #ffffff, #ff004c, #ff8a00, #f9cb28, #00ff88, #00d2ff, #26a0da, #a800ff, #ffffff, #ffffff, #ffffff)'
+          }}
+        >
           Navigate Your World <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-brand-500 to-indigo-600">
-            With Precision AI
-          </span>
+          With Precision AI
         </h1>
         <p className="text-slate-400 mt-8 text-base sm:text-xl md:text-2xl max-w-3xl leading-relaxed font-medium">
           The ultimate companion for modern explorers. Get data-driven insights 

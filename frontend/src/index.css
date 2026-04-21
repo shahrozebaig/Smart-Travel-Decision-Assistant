@@ -27,3 +27,15 @@
     @apply bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 active:scale-95 shadow-lg shadow-brand-900/20;
   }
 }
+
+@layer utilities {
+  .animate-text-wave {
+    background-size: 200% auto;
+    animation: textWave 15s linear infinite;
+  }
+}
+
+@keyframes textWave {
+  0% { background-position: 0% center; }
+  100% { background-position: -200% center; }
+}
