@@ -3,8 +3,8 @@ function Navbar({ onBack }) {
   return (
     <nav className="w-full px-8 py-4 flex items-center justify-between glass-panel sticky top-0 z-50">
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/20">
-          <span className="text-xl">🌤️</span>
+        <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-brand-500/20">
+          <img src="/logo.jpeg" alt="Logo" className="w-full h-full object-cover" />
         </div>
         <span className="font-bold text-xl tracking-tight">Smart Travel AI</span>
       </div>

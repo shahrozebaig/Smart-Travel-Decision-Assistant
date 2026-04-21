@@ -75,13 +75,7 @@ function App() {
             ))
           )}
         </section>
-        {!loading && data.length === 0 && (
-          <div className="text-center py-32 border border-dashed border-white/10 rounded-[3rem] bg-white/[0.01]">
-            <div className="text-5xl mb-6 opacity-30">📍</div>
-            <h3 className="text-xl font-medium text-slate-300 mb-2">Ready to explore?</h3>
-            <p className="text-slate-500">Search for one or more cities above to get started.</p>
-          </div>
-        )}
+
       </main>
     </div>
   );
