@@ -23,14 +23,14 @@ Evening: {trend.get('evening')}°C
 Rules:
 - If heavy rain → CAUTION + CAR
 - If very hot (>38°C) → CAUTION or CAR
-- If good weather → YES + BIKE/WALK
-- Avoid bike if high wind or storm
+- If good weather -> YES + BIKE or WALK (Prefer WALK for short distances)
+- Avoid bike/walk if high wind or storm
 
 Respond ONLY valid JSON.
 Format:
 {{
-"decision": "YES | CAUTION | NO",
-"vehicle": "BIKE|CAR|WALK|PUBLIC_TRANSPORT",
+"decision": "YES", "CAUTION", or "NO",
+"vehicle": "BIKE", "CAR", "WALK", or "PUBLIC_TRANSPORT",
 "plan": {{"morning":"...","afternoon":"...","evening":"..."}},
 "reason": ["point1","point2","point3"]
 }}"""

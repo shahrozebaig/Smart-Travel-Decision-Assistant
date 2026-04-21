@@ -12,13 +12,13 @@ function ResultCard({ data, onRefresh, isRefreshing, index }) {
   const ai = data.data.ai_decision;
   const isGood = ai.decision === "YES";
   const getVehicleIcon = (vehicle) => {
-    switch (vehicle) {
-      case "CAR": return "🚗";
-      case "BIKE": return "🏍️";
-      case "WALK": return "🚶";
-      case "PUBLIC_TRANSPORT": return "🚌";
-      default: return "🚘";
-    }
+    const v = vehicle?.toUpperCase() || "";
+    if (v.includes("BIKE") && v.includes("WALK")) return "🏍️/🚶";
+    if (v.includes("BIKE")) return "🏍️";
+    if (v.includes("WALK")) return "🚶";
+    if (v.includes("CAR")) return "🚗";
+    if (v.includes("PUBLIC")) return "🚌";
+    return "🚘";
   };
   const alerts = [
     weather.temperature > 35 ? "🔥 Heat Alert: Very high temperature" : null,
