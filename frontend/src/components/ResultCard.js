@@ -1,159 +1,188 @@
 import React, { useState, useEffect } from "react";
+
 function ResultCard({ data, onRefresh, isRefreshing, index }) {
   const [currentTime, setCurrentTime] = useState(new Date());
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+
   if (!data) return null;
+
   const weather = data.data.weather;
   const ai = data.data.ai_decision;
   const isGood = ai.decision === "YES";
+
   const getVehicleIcon = (vehicle) => {
     const v = vehicle?.toUpperCase() || "";
-    if (v.includes("BIKE") && v.includes("WALK")) return "🏍️/🚶";
-    if (v.includes("BIKE")) return "🏍️";
-    if (v.includes("WALK")) return "🚶";
-    if (v.includes("CAR")) return "🚗";
-    if (v.includes("PUBLIC")) return "🚌";
-    return "🚘";
+    if (v.includes("BIKE")) return <BikeIcon />;
+    if (v.includes("WALK")) return <WalkIcon />;
+    if (v.includes("CAR")) return <CarIcon />;
+    if (v.includes("PUBLIC")) return <BusIcon />;
+    return <CarIcon />;
   };
-  const getConditionEmoji = (condition) => {
-    const c = condition?.toLowerCase() || "";
-    if (c.includes("clear") || c.includes("sun")) return "☀️";
-    if (c.includes("mostly sunny")) return "🌤️";
-    if (c.includes("partly cloudy")) return "⛅";
-    if (c.includes("cloud")) return "☁️";
-    if (c.includes("overcast")) return "🌥️";
-    if (c.includes("rain") || c.includes("drizzle")) return "🌧️";
-    if (c.includes("shower")) return "🌦️";
-    if (c.includes("storm") || c.includes("thunder")) return "⛈️";
-    if (c.includes("lightning")) return "⚡";
-    if (c.includes("snow")) return "❄️";
-    if (c.includes("mist") || c.includes("fog") || c.includes("haze")) return "🌫️";
-    if (c.includes("smoke")) return "💨";
-    if (c.includes("dust") || c.includes("sand")) return "🏜️";
-    if (c.includes("wind")) return "🌬️";
-    if (c.includes("hot")) return "🔥";
-    if (c.includes("cold")) return "🥶";
-    return "🌡️";
-  };
-  const alerts = [
-    weather.temperature > 35 ? "🔥 Heat Alert: Very high temperature" : null,
-    weather.condition.toLowerCase().includes("rain") ? "🌧 Rain Alert: Carry protection" : null,
-  ].filter(Boolean);
-  const risks = [
-    weather.temperature > 32 ? "🌡 High Temp" : null,
-    weather.humidity > 70 ? "💧 Humidity" : null,
-    weather.wind_speed > 10 ? "🌬 Wind" : null,
-  ].filter(Boolean);
+
   const recommendations = [
-    !isGood ? "Avoid going out during peak hours" : "Weather is suitable for travel",
-    weather.temperature > 32 ? "Stay hydrated and avoid heat exposure" : null,
-    ai.vehicle === "CAR" ? "Prefer AC travel for comfort" : null,
-    ai.vehicle === "BIKE" ? "Wear protective gear while riding" : null,
-    ai.vehicle === "WALK" ? "Good for short outdoor activity" : null,
+    !isGood ? "Avoid outdoor activities during peak heat hours" : "Conditions are optimal for travel",
+    weather.temperature > 32 ? "Maintain high hydration levels" : null,
+    ai.vehicle === "CAR" ? "Climate-controlled transport advised" : null,
+    ai.vehicle === "BIKE" ? "Wear appropriate safety equipment" : null,
+    ai.vehicle === "WALK" ? "Ideal for light pedestrian travel" : null,
   ].filter(Boolean);
+
   return (
-    <div className="glass-panel rounded-[1.5rem] sm:rounded-[2rem] p-6 sm:p-8 relative group transition-all hover:shadow-brand-500/5">
-      <div className="flex justify-between items-start mb-6">
+    <div className="glass-card rounded-[2rem] p-8 flex flex-col h-full group">
+      <div className="flex justify-between items-start mb-8">
         <div>
-          <div className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Destination</div>
-          <h2 className="text-3xl font-bold tracking-tighter">{data.data.city}</h2>
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-2 block">Destination</span>
+          <h2 className="text-3xl font-display font-bold tracking-tight text-white">{data.data.city}</h2>
         </div>
         <button
           onClick={() => onRefresh(data.data.city, index)}
-          className={`p-3 rounded-2xl bg-white/5 hover:bg-brand-500/10 transition-all ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`p-3 rounded-full bg-white/[0.03] hover:bg-white/[0.1] border border-white/5 transition-all ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          <span className={`inline-block ${isRefreshing ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-500"}`}>
-            🔄
-          </span>
+          <RefreshIcon className={isRefreshing ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-700"} />
         </button>
       </div>
-      <div className="text-[10px] font-mono text-slate-500 mb-8 border-b border-white/5 pb-4 flex justify-between uppercase">
-        <span>Updated At</span>
-        <span>{currentTime.toLocaleTimeString()}</span>
+
+      <div className="grid grid-cols-2 gap-3 mb-8">
+        <MetricBox label="Temp" value={`${weather.temperature}°C`} icon={<TempIcon />} />
+        <MetricBox label="Humidity" value={`${weather.humidity}%`} icon={<HumidityIcon />} />
+        <MetricBox label="Wind" value={`${weather.wind_speed} km/h`} icon={<WindIcon />} />
+        <MetricBox label="Condition" value={weather.condition} icon={<CloudIcon />} />
       </div>
-      <div className="grid grid-cols-2 gap-4 mb-10">
-        <WeatherMetric label="Temperature" value={`${weather.temperature}°C`} icon="🌡️" />
-        <WeatherMetric label="Humidity" value={`${weather.humidity}%`} icon="💧" />
-        <WeatherMetric label="Wind Speed" value={`${weather.wind_speed}km/h`} icon="🌬️" />
-        <WeatherMetric label="Conditions" value={weather.condition} icon={getConditionEmoji(weather.condition)} />
-      </div>
-      <div className="space-y-8">
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-          <div className="flex items-start gap-4">
-            <div className={`mt-1 h-3 w-3 rounded-full shrink-0 ${isGood ? "bg-emerald-500" : "bg-rose-500"} shadow-[0_0_10px_rgba(16,185,129,0.2)]`}></div>
+
+      <div className="flex-grow space-y-6">
+        <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+          <div className="flex items-center gap-2 mb-3">
+            <div className={`h-1.5 w-1.5 rounded-full ${isGood ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]'}`}></div>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">AI Intelligence Report</span>
+          </div>
+          <p className="text-sm text-slate-300 leading-relaxed font-medium">
+            {Array.isArray(ai.reason) ? ai.reason[0] : ai.reason}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between py-4 border-y border-white/[0.05]">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-white/[0.03] flex items-center justify-center text-slate-400">
+              {getVehicleIcon(ai.vehicle)}
+            </div>
             <div>
-              <div className="text-sm font-bold tracking-tight mb-2 uppercase text-white/90">
-                AI System Analysis
-              </div>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                {Array.isArray(ai.reason) ? ai.reason[0] : ai.reason}
-              </p>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 block">Recommended</span>
+              <span className="text-sm font-bold text-white uppercase tracking-tight">{ai.vehicle.replace("_", " ")}</span>
             </div>
           </div>
-        </div>
-        <div className="flex items-center justify-between py-4 border-y border-white/5">
-          <div className="space-y-1">
-            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Recommended Mode</div>
-            <div className="text-xl font-bold flex items-center gap-2">
-              <span className="opacity-70">{getVehicleIcon(ai.vehicle)}</span>
-              {ai.vehicle.replace("_", " ")}
-            </div>
-          </div>
-          <div className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border ${isGood ? 'border-emerald-500/20 text-emerald-400' : 'border-rose-500/20 text-rose-400'}`}>
-            {isGood ? 'Optimal' : 'Advisory'}
+          <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${isGood ? 'border-emerald-500/20 text-emerald-400 bg-emerald-500/5' : 'border-rose-500/20 text-rose-400 bg-rose-500/5'}`}>
+            {isGood ? 'Safe' : 'Caution'}
           </div>
         </div>
-        <div className="space-y-4">
-          <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Expert Recommendations</div>
-          <ul className="space-y-3">
+
+        <div className="space-y-3">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Logistics Advisory</span>
+          <ul className="space-y-2">
             {recommendations.slice(0, 3).map((rec, i) => (
-              <li key={i} className="text-sm text-slate-400 flex items-start gap-3">
-                <span className="text-base shrink-0">
-                  {rec.includes("Avoid") || rec.includes("Avoid") ? "⚠️" : 
-                   rec.includes("Stay hydrated") ? "🥤" :
-                   rec.includes("AC") ? "❄️" :
-                   rec.includes("protective") ? "🛡️" :
-                   rec.includes("Good") ? "✅" : "💡"}
-                </span>
+              <li key={i} className="flex items-start gap-3 text-xs text-slate-400 leading-relaxed">
+                <div className="mt-1.5 h-1 w-1 rounded-full bg-slate-600 shrink-0"></div>
                 {rec}
               </li>
             ))}
           </ul>
         </div>
-        {(alerts.length > 0 || risks.length > 0) && (
-          <div className="px-2">
-            <div className="flex flex-wrap gap-2">
-              {alerts.map((a, i) => (
-                <span key={i} className="px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wider">
-                  {a.split(":")[0]}
-                </span>
-              ))}
-              {risks.map((r, i) => (
-                <span key={i} className="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-wider">
-                  {r}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+      </div>
+
+      <div className="mt-8 pt-4 border-t border-white/[0.03] flex justify-between items-center text-[10px] font-mono text-slate-600 uppercase tracking-widest">
+        <span>System Ready</span>
+        <span>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
       </div>
     </div>
   );
 }
-function WeatherMetric({ label, value, icon }) {
+
+function MetricBox({ label, value, icon }) {
   return (
-    <div className="glass-panel rounded-2xl p-4 flex items-center gap-3">
-      <div className="text-2xl opacity-80">{icon}</div>
+    <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/[0.03] flex flex-col gap-2">
+      <div className="text-slate-500">{icon}</div>
       <div>
-        <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight mb-1">{label}</div>
-        <div className="text-sm font-bold text-slate-200 uppercase">{value}</div>
+        <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest block">{label}</span>
+        <span className="text-xs font-bold text-slate-200 uppercase truncate block">{value}</span>
       </div>
     </div>
   );
 }
-export default ResultCard;
+
+// Minimalist Icons
+const RefreshIcon = ({ className }) => (
+  <svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M23 4v6h-6"></path>
+    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+  </svg>
+);
+
+const TempIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"></path>
+  </svg>
+);
+
+const HumidityIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path>
+  </svg>
+);
+
+const WindIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"></path>
+    <path d="M9.6 4.6A2 2 0 1 1 11 8H2"></path>
+    <path d="M12.6 19.4A2 2 0 1 0 14 16H2"></path>
+  </svg>
+);
+
+const CloudIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.5 19h2a4.5 4.5 0 0 0 0-9 4.48 4.48 0 0 0-3.3 1.5A7 7 0 1 0 5 15.5A4.5 4.5 0 0 0 9.5 20h8z"></path>
+  </svg>
+);
+
+
+const BikeIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="5.5" cy="17.5" r="3.5"></circle>
+    <circle cx="18.5" cy="17.5" r="3.5"></circle>
+    <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2"></path>
+  </svg>
+);
+
+const WalkIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m18 20-3-4 1.1-4.4c.1-.4-.1-.8-.5-1L12 9l2-3"></path>
+    <circle cx="15" cy="4" r="1"></circle>
+    <path d="m7 20 2-5 3-2-3-3 1-3"></path>
+  </svg>
+);
+
+const CarIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"></path>
+    <circle cx="7" cy="17" r="2"></circle>
+    <path d="M9 17h6"></path>
+    <circle cx="17" cy="17" r="2"></circle>
+  </svg>
+);
+
+const BusIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="4" y="3" width="16" height="15" rx="2"></rect>
+    <path d="M4 11h16"></path>
+    <path d="M8 15h.01"></path>
+    <path d="M16 15h.01"></path>
+    <path d="M6 18v2"></path>
+    <path d="M18 18v2"></path>
+  </svg>
+);
+
+export default ResultCard;

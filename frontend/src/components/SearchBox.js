@@ -1,35 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
+
 function SearchBox({ onSearch }) {
   const [input, setInput] = useState("");
   const [selectedCities, setSelectedCities] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
   const dropdownRef = useRef(null);
+
   const cities = [
     "Hyderabad", "Mumbai", "Delhi", "Bangalore", "Chennai", "Kolkata", "Pune",
     "Ahmedabad", "Jaipur", "Lucknow", "Surat", "Kanpur", "Nagpur", "Indore",
     "Thane", "Bhopal", "Visakhapatnam", "Patna", "Vadodara", "Ghaziabad",
-    "Ludhiana", "Agra", "Nashik", "Faridabad", "Meerut", "Rajkot", "Varanasi",
-    "Srinagar", "Aurangabad", "Dhanbad", "Amritsar", "Navi Mumbai", "Allahabad",
-    "Ranchi", "Howrah", "Coimbatore", "Jabalpur", "Gwalior", "Vijayawada",
-    "Jodhpur", "Madurai", "Raipur", "Kota", "Guwahati", "Chandigarh", "Solapur",
-    "Hubli", "Mysore", "Tiruchirappalli", "Bareilly", "Aligarh", "Tiruppur",
-    "Moradabad", "Jalandhar", "Bhubaneswar", "Salem", "Warangal", "Guntur",
-    "Noida", "Dehradun", "Darjeeling", "Shillong", "Gangtok", "Itanagar",
-    "Kohima", "Imphal", "Aizawl", "Agartala", "Manali", "Shimla", "Nainital",
-    "Rishikesh", "Udaipur", "Munnar", "Ooty", "Kochi", "Panaji", "Pondicherry",
-    "Meghalaya", "Sikkim", "Goa", "Kerala", "Uttarakhand", "Himachal Pradesh",
-    "Rajasthan", "Gujarat", "Karnataka", "Tamil Nadu", "Maharashtra",
-    "Assam", "Arunachal Pradesh", "Nagaland", "Manipur", "Mizoram", "Tripura",
     "New York", "London", "Tokyo", "Paris", "Dubai", "Singapore", "Sydney",
-    "Berlin", "Rome", "Toronto", "Bangkok", "Seoul", "Moscow", "Cape Town",
-    "USA", "US", "America", "UK", "Australia", "Canada", "Germany", "France", "Italy", "Japan",
-    "China", "Switzerland", "New Zealand", "Thailand", "Vietnam", "Bali", "Spain",
-    "Mexico", "Brazil", "South Africa", "Norway", "Sweden", "Netherlands", "Austria",
-    "California", "Texas", "Florida", "New York State", "Illinois", "Washington State",
-    "Georgia", "Pennsylvania", "Ohio", "Virginia", "Massachusetts", "Colorado",
-    "Arizona", "Nevada", "Oregon", "Michigan", "North Carolina", "New Jersey",
-    "Ontario", "Bavaria", "New South Wales", "British Columbia", "Quebec",
-    "Victoria", "Tuscany", "Boston"
+    "Berlin", "Rome", "Toronto", "Bangkok", "Seoul", "Moscow", "Cape Town"
   ];
 
   const filteredCities = cities.filter(
@@ -53,8 +35,6 @@ function SearchBox({ onSearch }) {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       if (input.trim()) {
-        // If there's a matching city in the filtered list, add the first one
-        // Otherwise add exactly what the user typed
         if (filteredCities.length > 0) {
           addCity(filteredCities[0]);
         } else {
@@ -63,6 +43,8 @@ function SearchBox({ onSearch }) {
       } else if (selectedCities.length > 0) {
         handleSearch();
       }
+    } else if (e.key === "Backspace" && !input && selectedCities.length > 0) {
+      removeCity(selectedCities[selectedCities.length - 1]);
     }
   };
 
@@ -72,7 +54,6 @@ function SearchBox({ onSearch }) {
         onSearch(input.trim());
         return;
       }
-      alert("Select at least one city");
       return;
     }
     onSearch(selectedCities.join(","));
@@ -89,69 +70,99 @@ function SearchBox({ onSearch }) {
   }, []);
 
   return (
-    <div className="w-full max-w-2xl mx-auto mt-6 px-4" ref={dropdownRef}>
-      <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 relative">
-        <div className="flex flex-wrap gap-2 mb-4 min-h-[40px]">
-          {selectedCities.map((city, index) => (
-            <div
-              key={index}
-              className="bg-brand-500/10 border border-brand-500/20 text-brand-200 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 group animate-in fade-in zoom-in duration-300"
-            >
-              {city}
-              <button
-                className="text-brand-400 hover:text-rose-400 transition-colors"
-                onClick={() => removeCity(city)}
+    <div className="w-full max-w-lg mx-auto relative z-[60]" ref={dropdownRef}>
+      <div className={`relative transition-all duration-300 ${isFocused ? 'scale-[1.01]' : 'scale-100'} z-50`}>
+        <div
+          className={`glass-panel rounded-2xl p-1.5 flex flex-col gap-1 transition-all duration-300 ${isFocused ? 'border-white/20 ring-4 ring-white/5' : 'border-white/5'} bg-[#020617]/90 backdrop-blur-3xl`}
+        >
+          <div className="flex flex-wrap gap-1.5 px-2 pt-1.5">
+            {selectedCities.map((city, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white/10 border border-white/10 text-[10px] font-medium text-white group animate-in fade-in zoom-in duration-300"
               >
-                ✕
-              </button>
+                {city}
+                <button
+                  className="text-white/40 hover:text-white transition-colors"
+                  onClick={() => removeCity(city)}
+                >
+                  ✕
+                </button>
+              </span>
+            ))}
+          </div>
+
+          <div className="relative flex items-center">
+            <div className="absolute left-4 text-slate-500 pointer-events-none">
+              <SearchIcon size={16} />
             </div>
-          ))}
-          {selectedCities.length === 0 && !input && (
-            <div className="text-slate-600 text-sm py-1.5 italic">Add destinations to analyze...</div>
-          )}
-        </div>
-        <div className="relative">
-          <input
-            className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-6 py-4 outline-none text-white placeholder-slate-600 transition-all focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20"
-            placeholder="Type city name (e.g. Darjeeling, London)..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onKeyDown={handleKeyDown}
-          />
+            <input
+              className="w-full bg-transparent border-none px-10 py-2.5 text-white placeholder:text-slate-500 focus:ring-0 focus:outline-none text-sm"
+              placeholder={selectedCities.length > 0 ? "Add more..." : "Enter destinations"}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
+
           {isFocused && input && (
-            <div className="absolute top-full left-0 right-0 mt-2 z-20 bg-slate-900 border border-white/10 rounded-xl max-h-64 overflow-y-auto shadow-2xl backdrop-blur-xl">
-              {filteredCities.length > 0 ? (
-                filteredCities.map((city, index) => (
-                  <div
-                    key={index}
-                    className="px-6 py-3 hover:bg-brand-500/10 cursor-pointer text-slate-400 hover:text-white transition-colors flex items-center justify-between group"
-                    onClick={() => addCity(city)}
-                  >
-                    <span>{city}</span>
-                    <span className="text-[10px] text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">Select</span>
+            <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-[100] glass-panel rounded-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 bg-[#0a0f24] shadow-2xl border border-white/10">
+              <div className="p-1.5">
+                {filteredCities.length > 0 ? (
+                  filteredCities.map((city, index) => (
+                    <div
+                      key={index}
+                      className="px-3 py-2 hover:bg-white/10 cursor-pointer text-slate-300 hover:text-white transition-colors rounded-lg flex items-center justify-between group"
+                      onClick={() => addCity(city)}
+                    >
+                      <span className="text-xs font-medium">{city}</span>
+                      <span className="text-[9px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">Select</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="px-3 py-2 text-slate-300 text-xs flex items-center justify-between cursor-pointer hover:bg-white/10 rounded-lg"
+                    onClick={() => addCity(input)}>
+                    <span className="font-medium">Add "{input}"</span>
+                    <span className="text-[9px] text-slate-500 uppercase tracking-widest">Custom</span>
                   </div>
-                ))
-              ) : (
-                <div className="px-6 py-4 text-slate-400 text-sm flex items-center justify-between cursor-pointer hover:bg-brand-500/10"
-                  onClick={() => addCity(input)}>
-                  <span>Add "{input}"</span>
-                  <span className="text-[10px] text-slate-600">Custom Entry</span>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           )}
         </div>
       </div>
-      <button
-        className="w-full mt-6 bg-brand-600 hover:bg-brand-500 text-white font-bold py-5 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-brand-600/20 flex items-center justify-center gap-2 group"
-        onClick={handleSearch}
-      >
-        <span>GENERATE TRAVEL ANALYSIS</span>
-        <span className="group-hover:translate-x-1 transition-transform">→</span>
-      </button>
-    </div>
 
+      <div className="flex justify-center mt-6 relative z-10">
+        <button
+          className="premium-button flex items-center gap-2 group min-w-[180px] py-2.5 text-sm justify-center"
+          onClick={handleSearch}
+        >
+          <span className="tracking-tight">Analyze Strategy</span>
+          <ArrowRightIcon size={14} />
+        </button>
+      </div>
+    </div>
   );
 }
+
+function SearchIcon({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+  );
+}
+
+function ArrowRightIcon({ size = 18 }) {
+  return (
+    <svg className="group-hover:translate-x-1 transition-transform" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+      <polyline points="12 5 19 12 12 19"></polyline>
+    </svg>
+  );
+}
+
+
 export default SearchBox;

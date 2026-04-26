@@ -1,118 +1,123 @@
 import React from "react";
+import Navbar from "../components/Navbar";
+
 function LandingPage({ onStart }) {
   const features = [
+
     {
-      image: "/Weather.jpeg",
-      title: "Real-time Weather Insights",
-      desc: "Stay ahead of the elements with hyper-local forecasts and real-time environment tracking.",
+      title: "Real-time Weather Intelligence",
+      desc: "Stay ahead of environmental factors with hyper-local forecasts and real-time atmospheric tracking.",
     },
     {
-      image: "/Advice.jpeg",
-      title: "Smart AI Recommendations",
-      desc: "Human-centric AI that analyzes weather patterns to give you the most safe and efficient travel advice.",
+      title: "AI-Powered Advisory",
+      desc: "Advanced neural networks analyze weather patterns to provide secure and efficient travel strategies.",
     },
     {
-      image: "/Transport.jpeg",
-      title: "Optimal Transport Modes",
-      desc: "Whether it's walking, biking, or taking a car—we find the perfect mode for your specific conditions.",
+      title: "Optimal Logistics",
+      desc: "Whether walking, cycling, or driving, we determine the most efficient mode for current conditions.",
     },
     {
-      image: "/Results.jpeg",
-      title: "Instant Analytics",
-      desc: "Get deep insights into your destination's climate and trends in a beautiful, easy-to-read dashboard.",
-      objectPosition: "bottom"
+      title: "Instant Destination Analytics",
+      desc: "Comprehensive insights into climate trends and regional conditions in a sophisticated interface.",
     }
   ];
 
   return (
-    <div className="min-h-screen relative flex flex-col overflow-x-hidden text-slate-50">
+    <div className="min-h-screen bg-[#020617] text-slate-200 overflow-x-hidden selection:bg-white/20">
       {/* Fixed Background Image */}
       <div 
-        className="fixed inset-0 z-0 bg-slate-950"
+        className="fixed inset-0 z-0 bg-[#020617]"
         style={{
           backgroundImage: 'url("/background.jpeg")',
           backgroundSize: 'cover',
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center',
-          opacity: 0.5
+          opacity: 0.6
         }}
       ></div>
-      <div className="fixed inset-0 z-0 bg-gradient-to-b from-slate-950/40 via-transparent to-slate-950/80 pointer-events-none"></div>
 
-      {/* Glow Animations */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-600/20 blur-[120px] rounded-full pointer-events-none z-10 animate-pulse"></div>
+      {/* Background gradients */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-[1]">
+        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/10 blur-[120px] rounded-full"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-500/10 blur-[120px] rounded-full"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#020617]/70 via-transparent to-[#020617]/80"></div>
+      </div>
 
-      <nav className="sticky top-0 z-50 px-4 py-4 flex justify-between items-center glass-panel backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg overflow-hidden shadow-lg shadow-brand-500/20">
-            <img src="/logo.jpeg" alt="Logo" className="w-full h-full object-cover" />
+
+      <Navbar onGetStarted={onStart} />
+
+
+
+      <main className="relative pt-48 pb-32 px-6">
+        <div className="max-w-5xl mx-auto text-center">
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-display font-bold tracking-tight text-white mb-8 leading-[1.05] animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+            Navigate with <br />
+            <span className="text-gradient">Absolute Precision</span>
+          </h1>
+          
+          <p className="text-slate-400 text-lg sm:text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed mb-12 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200 font-medium">
+            The professional companion for modern explorers. Data-driven insights 
+            and AI-powered logistics for every destination.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+            <button
+              onClick={onStart}
+              className="premium-button min-w-[200px] flex items-center justify-center gap-2"
+            >
+              Enter Dashboard
+              <ArrowIcon />
+            </button>
           </div>
-          <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white">Smart Travel AI</h1>
-        </div>
-      </nav>
-
-      <main className="relative z-20 flex flex-col items-center justify-center text-center px-6 pt-24 pb-32">
-        <h1 
-          className="text-4xl sm:text-6xl md:text-8xl font-bold leading-[1.1] max-w-5xl tracking-tighter text-transparent bg-clip-text animate-text-wave"
-          style={{
-            backgroundImage: 'linear-gradient(to right, #ff004c, #ff8a00, #f9cb28, #00ff88, #00d2ff, #26a0da, #a800ff, #ffffff, #ffffff, #ffffff, #ff004c, #ff8a00, #f9cb28, #00ff88, #00d2ff, #26a0da, #a800ff, #ffffff, #ffffff, #ffffff)'
-          }}
-        >
-          Navigate Your World <br />
-          With Precision AI
-        </h1>
-        <p className="text-slate-400 mt-8 text-base sm:text-xl md:text-2xl max-w-3xl leading-relaxed font-medium">
-          The ultimate companion for modern explorers. Get data-driven insights 
-          and AI-powered decisions for every step of your journey.
-        </p>
-        <div className="mt-14 flex flex-col sm:flex-row gap-6">
-          <button
-            onClick={onStart}
-            className="btn-primary group flex items-center justify-center gap-3 text-xl px-12 py-5 rounded-[2rem]"
-          >
-            Explore the Dashboard
-            <span className="group-hover:translate-x-1 transition-transform">→</span>
-          </button>
         </div>
       </main>
 
-      <section className="relative z-20 px-6 max-w-7xl mx-auto w-full space-y-20 sm:space-y-32 pb-32">
-        {features.map((feature, idx) => (
-          <FeatureSection 
-            key={idx} 
-            {...feature} 
-            isReversed={idx % 2 !== 0} 
-          />
-        ))}
-      </section>
-    </div>
-  );
-}
-
-function FeatureSection({ image, title, desc, isReversed, objectPosition }) {
-  return (
-    <div className={`flex flex-col ${isReversed ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-8 md:gap-24`}>
-      <div className="flex-1 w-full">
-        <div className="relative group">
-          <div className="absolute -inset-2 sm:-inset-4 bg-brand-500/10 rounded-[1.5rem] sm:rounded-[2.5rem] blur-xl group-hover:bg-brand-500/20 transition-all duration-700"></div>
-          <img
-            src={image}
-            alt={title}
-            className="relative w-full rounded-[1.5rem] sm:rounded-[2rem] border border-white/10 shadow-2xl object-cover aspect-video h-64 sm:h-[350px] transition-transform duration-500"
-            style={{ objectPosition: objectPosition || 'center' }}
-          />
+      <section className="max-w-7xl mx-auto px-6 py-32">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {features.map((feature, idx) => (
+            <div 
+              key={idx} 
+              className="glass-card rounded-3xl p-8 hover:translate-y-[-4px] transition-all duration-300 group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/10 mb-6 flex items-center justify-center text-white/50 group-hover:text-white group-hover:bg-white/10 transition-colors">
+                <FeatureIcon index={idx} />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-4 tracking-tight">{feature.title}</h3>
+              <p className="text-slate-500 text-sm leading-relaxed group-hover:text-slate-400 transition-colors">
+                {feature.desc}
+              </p>
+            </div>
+          ))}
         </div>
-      </div>
-      <div className="flex-1 text-center md:text-left space-y-4 sm:space-y-6">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
-          {title}
-        </h2>
-        <p className="text-slate-400 text-base sm:text-lg md:text-xl leading-relaxed">
-          {desc}
+      </section>
+
+      <footer className="py-12 border-t border-white/[0.05] text-center">
+        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-600">
+          © 2026 Smart Travel AI. All Rights Reserved.
         </p>
-      </div>
+      </footer>
     </div>
   );
 }
 
-export default LandingPage;
+function ArrowIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+      <polyline points="12 5 19 12 12 19"></polyline>
+    </svg>
+  );
+}
+
+function FeatureIcon({ index }) {
+  const icons = [
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19h2a4.5 4.5 0 0 0 0-9 4.48 4.48 0 0 0-3.3 1.5A7 7 0 1 0 5 15.5A4.5 4.5 0 0 0 9.5 20h8z"></path></svg>,
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v2M12 18v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>,
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"></path></svg>,
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+  ];
+  return icons[index] || icons[0];
+}
+
+
+export default LandingPage;
